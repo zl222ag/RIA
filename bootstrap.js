@@ -1,5 +1,6 @@
 //© Zlatko Ladan 2013
 
+// ## Base file
 require.config({
 	paths: {
 		// Get all the required modules
