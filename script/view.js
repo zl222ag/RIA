@@ -14,7 +14,7 @@ define(["backbone"], function (Backbone) {
 			// Adds to the element
 			$(this.el).append(
 				// Adds the text to the element
-				$(this.tag).append(this.text())
+				$(this.tag).append(this.text()).addClass("blink")
 			);
 
 			return this;
