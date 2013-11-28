@@ -7,7 +7,7 @@ require.config({
 		jquery: "script/jquery-2.0.3.min",
 		backbone: "script/backbone",
 		purebackbone: "script/backbone-min",
-		underscore: "script/underscore-min",
+		underscore: "script/underscore-min"
 	},
 	shim: {
 		// Shim for the modules
@@ -21,6 +21,7 @@ require.config({
 });
 
 require(["app"], function (App) {
+	"use strict";
 	// Start it all.
 	App.start();
 });

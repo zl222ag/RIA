@@ -2,11 +2,12 @@
 
 // ## The View
 define(["backbone"], function (Backbone) {
+	"use strict";
 	return Backbone.View.extend({
 		el: 'body',
 		tag: '<h1 />',
 		text: function () {
-			return this.model.text
+			return this.model.text;
 		},
 
 		render: function () {

@@ -1,7 +1,8 @@
 //© Zlatko Ladan 2013
 
 // ## Starting module
-define(["backbone", "script/view.js", "script/model.js"], function (Backbone, View, Model) {
+define(["script/view.js", "script/model.js"], function (View, Model) {
+	"use strict";
 	return {
 		// The function that starts everything.
 		start: function () {
