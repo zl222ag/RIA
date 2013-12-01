@@ -7,7 +7,8 @@ require.config({
 		jquery: "script/jquery-2.0.3.min",
 		backbone: "script/backbone",
 		purebackbone: "script/backbone-min",
-		underscore: "script/underscore-min"
+		underscore: "script/underscore-min",
+		jade: "script/jade"
 	},
 	shim: {
 		// Shim for the modules
