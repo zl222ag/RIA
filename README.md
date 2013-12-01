@@ -1,6 +1,6 @@
 # RIA word typing game
 
-This repository was made for the course "RIA-utveckling med JavaScript" (2DV407), program "Utvecklare av Digitala Utvecklare" (2011, 180P).
+This repository was made for the course "RIA-utveckling med JavaScript" (2DV407), program "Utvecklare av digitala tjänster" (180P, 2011).
 
 The application is supposed to be a word game where you type in the word that's displayed, is timed and has categories and has support for 2-3 languages, but it isn't really there yet.
 
