@@ -7,7 +7,7 @@ define(["backbone"], function (Backbone) {
 		el: 'body',
 		headerTagName: '<h1 />',
 		textTagName: '<p />',
-		headerClass: "text-container",
+		headerClass: "text-container text-center",
 		textClass: "text-center",
 		textTag: null,
 

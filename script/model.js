@@ -15,29 +15,36 @@ define(["backbone"], function (Backbone) {
 			};
 		},
 
-		initialize: function () {
-			//TODO ADD MENUES 'N' STUFF.
-			/*var lang = navigator.language || navigator.userLanguage,
-				index = lang.indexOf("-");*/
-			var lang = "sv";
-			/*if (index > 0) {
-				lang = lang.substr(0, index);
-			}*/
-
+		getWordList: function (a_language) {
+			var that = this;
+			//downloads a word list, default language list is english.
 			$.ajax({
-				url: "words." + lang + ".txt",
+				url: "wordlist." + (typeof a_language !== "string" ? "en" : a_language) + ".txt",
 				dataType: "text",
 				contentType: "text/plain; charset=utf-8",
 				success: function (data) {
-					this.words = data.trimLeft().trimRight().split(/\n+/);
-					console.log(this.words.join("\n"));
-				},
-				done: function () {
+					that.words = data.trimLeft().trimRight().split(/\n+/);
 				},
 				error: function () {
-					alert('Couldn\'t load the wordlist =(.');
+					// get the default language list if is failes with a non default one
+					if (a_language === null) {
+						alert('Couldn\'t load the wordlist =(.');
+					} else {
+						that.getWordList();
+					}
 				}
 			});
+		},
+
+		initialize: function () {
+			//TODO ADD MENUES 'N' STUFF.
+			var lang = navigator.language || navigator.userLanguage,
+				index = lang.indexOf("-");
+
+			if (index > 0) {
+				lang = lang.substr(0, index);
+			}
+			this.getWordList(lang);
 		}
 	});
 });
