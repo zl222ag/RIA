@@ -1,0 +1,1 @@
+define(["script/view.js","script/model.js"],function(e,t){return{start:function(){(new e({model:new t})).render()}}});

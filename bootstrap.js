@@ -10,6 +10,7 @@ require.config({
 		underscore: "script/underscore-min",
 		jade: "script/jade"
 	},
+
 	shim: {
 		// Shim for the modules
 		jquery: { exports: "jQuery" },

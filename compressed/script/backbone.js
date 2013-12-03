@@ -1,0 +1,1 @@
+define(["purebackbone"],function(e){return Backbone.noConflict(),e});

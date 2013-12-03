@@ -5,18 +5,43 @@ define(["backbone"], function (Backbone) {
 	"use strict";
 	return Backbone.View.extend({
 		el: 'body',
-		tag: '<h1 />',
+		headerTagName: '<h1 />',
+		textTagName: '<p />',
+		headerClass: "text-container",
+		textClass: "text-center",
+		textTag: null,
+
 		text: function () {
 			return this.model.text;
 		},
 
+		keyPress: function () {
+			return this.model.keyPress(this.change());
+		},
+
+		change: function () {
+			var that = this;
+			return function (a_char) {
+				that.textTag.text(that.textTag.text() + a_char);
+			};
+		},
+
 		render: function () {
-			// Adds to the element
+			// Adds to the body
 			$(this.el).append(
-				// Adds the text to the element
-				$(this.tag).append(this.text()).addClass("blink")
+				// Adds the header with text to the body
+				$(this.headerTagName).text(this.text()).addClass(this.headerClass)
 			);
 
+			this.textTag = $(this.textTagName).addClass(this.textClass);
+
+			// Adds to the body
+			$(this.el).append(
+				// Adds text element to the body
+				this.textTag
+			);
+
+			$(document).keypress(this.keyPress());
 			return this;
 		}
 	});
