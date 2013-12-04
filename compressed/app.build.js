@@ -1,1 +1,1 @@
-({appDir:".",baseUrl:".",dir:"compressed/",fileExclusionRegExp:/^(r\.js|doc\.html|\.git.*|.*\.(md|jar))$/});
+({appDir:".",baseUrl:".",dir:"compressed/",fileExclusionRegExp:/^(r\.js|jade\.js|doc\.html|\.git.*|.+\.(md|jar))$/});

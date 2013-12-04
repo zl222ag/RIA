@@ -1,8 +1,8 @@
 // © Zlatko Ladan 2013
 
 // ## The View
-define(["backbone", "jade"], function (Backbone, Jade) {
-	"use strict";
+define(['backbone', 'jade'], function (Backbone, Jade) {
+	'use strict';
 	return Backbone.View.extend({
 		el: 'body',
 		headerTagFormat: 'h1.text-container.text-center #{text}',
