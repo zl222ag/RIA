@@ -1,13 +1,13 @@
 // © Zlatko Ladan 2013
 
 // ## The Model
-define(["backbone"], function (Backbone) {
-	"use strict";
+define(['backbone'], function (Backbone) {
+	'use strict';
 	return Backbone.Model.extend({
 		HEADER_TEXT: 'The Insert Text Game!',
-		DEFAULT_LANG: "en",
-		WORDLISTS_DIRECTORY: "wordlists/",
-		WORDLIST_EXTENSION: ".txt",
+		DEFAULT_LANG: 'en',
+		WORDLISTS_DIRECTORY: 'wordlists/',
+		WORDLIST_EXTENSION: '.txt',
 		CHAR_FORMAT: /^[a-z'\-]$/,
 
 		words: null,
@@ -60,8 +60,8 @@ define(["backbone"], function (Backbone) {
 			// Downloads a word list, default language list is english.
 			$.ajax({
 				url: that.WORDLISTS_DIRECTORY + that.lang + that.WORDLIST_EXTENSION,
-				dataType: "text",
-				contentType: "text/plain; charset=utf-8",
+				dataType: 'text',
+				contentType: 'text/plain; charset=utf-8',
 				success: function (data) {
 					that.words = data.trimLeft().trimRight().split(/\n+/);
 					that.pickWord();
@@ -83,7 +83,7 @@ define(["backbone"], function (Backbone) {
 			// TODO: ADD MENUES 'N' STUFF.
 			var index = 0;
 			this.lang = navigator.language || navigator.userLanguage;
-			index = this.lang.indexOf("-");
+			index = this.lang.indexOf('-');
 
 			if (index > 0) {
 				this.lang = this.lang.substr(0, index);
