@@ -1,4 +1,4 @@
-//© Zlatko Ladan 2013
+// © Zlatko Ladan 2013
 
 // ## Base file
 require.config({

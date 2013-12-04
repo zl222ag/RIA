@@ -1,4 +1,4 @@
-//© Zlatko Ladan 2013
+// © Zlatko Ladan 2013
 
 // ## Starting module
 define(["script/view.js", "script/model.js"], function (View, Model) {
