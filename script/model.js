@@ -8,7 +8,7 @@ define(['backbone'], function (Backbone) {
 		DEFAULT_LANG: 'en',
 		WORDLISTS_DIRECTORY: 'wordlists/',
 		WORDLIST_EXTENSION: '.txt',
-		CHAR_FORMAT: /^[a-z'\-]$/,
+		CHAR_FORMAT: /^[a-zéåäöčćđž'\-]$/,
 
 		words: null,
 		wordId: 0,
