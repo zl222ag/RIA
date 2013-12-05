@@ -22,7 +22,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		},
 
 		keyPress: function () {
-			var that = this;
+			// Check for the character and
+			// sends it to the model to check
+			// if it is the same, then fixes with
+			// the cleared part and the non cleared.
+			var that = this, word = null, splitIndex = 0;
 
 			return function (e) {
 				e.preventDefault();
@@ -31,16 +35,19 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 				}
 
 				if (that.model.guessChar(String.fromCharCode(e.charCode).toLowerCase())) {
-					//gnäll gnäll.
+					splitIndex = that.model.get('currentLetterId');
+					word = that.model.getCurrentWord();
+					that.clearedWordTag.text(word.substr(0, splitIndex));
+					that.wordTag.text(word.substr(splitIndex));
 				}
 			};
 		},
 
-		onLoadLang: function () {
+		onChangeWord: function () {
 			var that = this;
 
 			return function () {
-				that.inputWordTag.val('');
+				that.clearedWordTag.text('');
 				that.wordTag.text(that.model.getCurrentWord());
 			};
 		},
@@ -50,6 +57,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		},
 
 		initialize: function () {
+			// Adds container and adds to it a header and
+			// a container containing cleared parts of the
+			// word and the uncleared  parts and also adds
+			// a input for reading.
+
 			var jContainer = null, jHeader = null, jWordContainer = null,
 				jCleared = null, jWord = null, jInputText = null,
 				container = null, wordContainer = null;
@@ -60,7 +72,7 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			jCleared = Jade.compile(this.CLEARED_WORD_TAG_FORMAT);
 			jWord = Jade.compile(this.WORD_TAG_FORMAT);
 			jInputText = Jade.compile(this.INPUT_WORD_TAG_FORMAT);
-			this.model.on('change:wordId', this.onLoadLang());
+			this.model.on('change:wordId', this.onChangeWord());
 
 			container = $(jContainer());
 			wordContainer = $(jWordContainer());
@@ -68,33 +80,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			this.wordTag = $(jWord());
 			this.inputWordTag = $(jInputText());
 
-			// Adds to the container
-			container.append(
-				// Adds the header with text to the container
-				jHeader({text: this.getHeaderText()})
-			);
-
-			wordContainer.append(
-				this.clearedWordTag
-			);
-
-			wordContainer.append(
-				this.wordTag
-			);
-
-			// Adds to the container
-			container.append(
-				// Adds text element to the container
-				wordContainer
-			);
-
-			// Adds to the container
-			container.append(
-				// Adds the input text element to the container
-				this.inputWordTag
-			);
-
-			// Adds to the body
+			container.append(jHeader({text: this.getHeaderText()}));
+			wordContainer.append(this.clearedWordTag);
+			wordContainer.append(this.wordTag);
+			container.append(wordContainer);
+			container.append(this.inputWordTag);
 			$(this.el).append(container);
 
 			$(this.inputWordTag).keypress(this.keyPress());
