@@ -8,7 +8,8 @@ require.config({
 		backbone: 'script/backbone',
 		purebackbone: 'script/backbone-min',
 		underscore: 'script/underscore-min',
-		jade: 'script/jade'
+		jade: 'script/jade',
+		text: 'script/text'
 	},
 
 	shim: {
