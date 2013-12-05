@@ -1,7 +1,7 @@
 // © Zlatko Ladan 2013
 
 // ## The Model
-define(['backbone'], function (Backbone) {
+define(['backbone', 'text'], function (Backbone) {
 	'use strict';
 
 	return Backbone.Model.extend({
@@ -25,29 +25,18 @@ define(['backbone'], function (Backbone) {
 		validate: function () {
 		},
 
-		keyPress: function (a_event) {
-			var that = this;
+		guessChar: function (a_char) {
+			if (this.getCurrentWord()[this.get('currentLetterId')] !== a_char) {
+				return false;
+			}
 
-			return function (e) {
-				var enteredChar = null;
+			this.set('currentLetterId', this.get('currentLetterId') + 1);
 
-				e.preventDefault();
-				if (e.ctrlKey || e.charCode < 32) {
-					return;
-				}
-
-				enteredChar = String.fromCharCode(e.charCode).toLowerCase();
-
-				if (that.getCurrentWord()[that.get('currentLetterId')] === enteredChar) {
-					a_event(enteredChar);
-					that.set('currentLetterId', that.get('currentLetterId') + 1);
-
-					if (that.get('currentLetterId') >= that.getCurrentWord().length) {
-						that.deletePastWord();
-						that.pickWord();
-					}
-				}
-			};
+			if (this.get('currentLetterId') >= this.getCurrentWord().length) {
+				this.deletePastWord();
+				this.pickWord();
+			}
+			return true;
 		},
 
 		deletePastWord: function () {
@@ -62,22 +51,16 @@ define(['backbone'], function (Backbone) {
 		getWordList: function () {
 			var that = this;
 			// Downloads a word list, default language list is english.
-			$.ajax({
-				url: that.get('WORDLISTS_DIRECTORY') + that.get('lang') + that.get('WORDLIST_EXTENSION'),
-				dataType: 'text',
-				contentType: 'text/plain; charset=utf-8',
-				success: function (a_data) {
-					that.set('words', a_data.trimLeft().trimRight().split(/\n+/));
-					that.pickWord();
-				},
-				error: function () {
-					// Gets the default language list if is failes with a non default one
-					if (that.get('lang') === that.get('DEFAULT_LANG')) {
-						alert('Couldn\'t load the wordlist =(.');
-					} else {
-						that.set('lang', that.get('DEFAULT_LANG'));
-						that.getWordList();
-					}
+			require(['text!' + this.get('WORDLISTS_DIRECTORY') + this.get('lang') + this.get('WORDLIST_EXTENSION') + '!strip'], function (WordList) {
+				that.set('words', WordList.trimLeft().trimRight().split(/\n+/));
+				that.pickWord();
+			}, function () {
+				// Gets the default language list if is failes with a non default one
+				if (that.get('lang') === that.get('DEFAULT_LANG')) {
+					alert('Couldn\'t load the wordlist =(.');
+				} else {
+					that.set('lang', that.get('DEFAULT_LANG'));
+					that.getWordList();
 				}
 			});
 		},
@@ -91,6 +74,8 @@ define(['backbone'], function (Backbone) {
 
 			if (index > 0) {
 				this.set('lang', lang.substr(0, index));
+			} else {
+				this.set('lang', lang);
 			}
 		}
 	});

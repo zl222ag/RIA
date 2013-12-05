@@ -5,28 +5,34 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 	'use strict';
 
 	return Backbone.View.extend({
-		TEXT_TAG_FORMAT: 'p.text-center',
-		INPUT_TEXT_TAG_FORMAT: 'input(type="text").text-center',
+		WORD_CONTAINER_TAG_FORMAT: 'div.text-center',
+		CLEARED_WORD_TAG_FORMAT: 'span.cleared',
+		WORD_TAG_FORMAT: 'span',
+		INPUT_WORD_TAG_FORMAT: 'input(type="text", maxlength=1).text-center',
 		HEADER_TAG_FORMAT: 'h1.text-container.text-center #{text}',
 		CONTAINER_TAG_FORMAT: 'div.container',
 		el: 'body',
 
-		textTag: null,
-		inputTextTag: null,
+		clearedWordTag: null,
+		wordTag: null,
+		inputWordTag: null,
 
-		text: function () {
+		getHeaderText: function () {
 			return this.model.get('HEADER_TEXT');
 		},
 
 		keyPress: function () {
-			return this.model.keyPress(this.change());
-		},
-
-		change: function () {
 			var that = this;
 
-			return function (a_char) {
-				that.inputTextTag.val(that.inputTextTag.val() + a_char);
+			return function (e) {
+				e.preventDefault();
+				if (e.ctrlKey || e.charCode < 32) {
+					return;
+				}
+
+				if (that.model.guessChar(String.fromCharCode(e.charCode).toLowerCase())) {
+					//gnäll gnäll.
+				}
 			};
 		},
 
@@ -34,8 +40,8 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			var that = this;
 
 			return function () {
-				that.inputTextTag.val("");
-				that.textTag.text(that.model.getCurrentWord());
+				that.inputWordTag.val('');
+				that.wordTag.text(that.model.getCurrentWord());
 			};
 		},
 
@@ -44,42 +50,54 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		},
 
 		initialize: function () {
-			var jContainer = null, jHeader = null,
-				jText = null, jInputText = null,
-				container = null;
+			var jContainer = null, jHeader = null, jWordContainer = null,
+				jCleared = null, jWord = null, jInputText = null,
+				container = null, wordContainer = null;
 
 			jContainer = Jade.compile(this.CONTAINER_TAG_FORMAT);
 			jHeader = Jade.compile(this.HEADER_TAG_FORMAT);
-			jText = Jade.compile(this.TEXT_TAG_FORMAT);
-			jInputText = Jade.compile(this.INPUT_TEXT_TAG_FORMAT);
+			jWordContainer = Jade.compile(this.WORD_CONTAINER_TAG_FORMAT);
+			jCleared = Jade.compile(this.CLEARED_WORD_TAG_FORMAT);
+			jWord = Jade.compile(this.WORD_TAG_FORMAT);
+			jInputText = Jade.compile(this.INPUT_WORD_TAG_FORMAT);
 			this.model.on('change:wordId', this.onLoadLang());
 
 			container = $(jContainer());
-			this.textTag = $(jText());
-			this.inputTextTag = $(jInputText());
-
-			// Adds to the body
-			$(this.el).append(container);
+			wordContainer = $(jWordContainer());
+			this.clearedWordTag = $(jCleared());
+			this.wordTag = $(jWord());
+			this.inputWordTag = $(jInputText());
 
 			// Adds to the container
 			container.append(
 				// Adds the header with text to the container
-				jHeader({text: this.text()})
+				jHeader({text: this.getHeaderText()})
+			);
+
+			wordContainer.append(
+				this.clearedWordTag
+			);
+
+			wordContainer.append(
+				this.wordTag
 			);
 
 			// Adds to the container
 			container.append(
 				// Adds text element to the container
-				this.textTag
+				wordContainer
 			);
 
 			// Adds to the container
 			container.append(
 				// Adds the input text element to the container
-				this.inputTextTag
+				this.inputWordTag
 			);
 
-			$(this.inputTextTag).keypress(this.keyPress());
+			// Adds to the body
+			$(this.el).append(container);
+
+			$(this.inputWordTag).keypress(this.keyPress());
 			this.model.getWordList();
 		},
 
