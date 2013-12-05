@@ -3,42 +3,46 @@
 // ## The Model
 define(['backbone'], function (Backbone) {
 	'use strict';
+
 	return Backbone.Model.extend({
-		HEADER_TEXT: 'The Insert Text Game!',
-		DEFAULT_LANG: 'en',
-		WORDLISTS_DIRECTORY: 'wordlists/',
-		WORDLIST_EXTENSION: '.txt',
-		CHAR_FORMAT: /^[a-zéåäöčćđž'\-]$/,
+		defaults: {
+			HEADER_TEXT: 'The Insert Text Game!',
+			DEFAULT_LANG: 'en',
+			WORDLISTS_DIRECTORY: 'wordlists/',
+			WORDLIST_EXTENSION: '.txt',
 
-		words: null,
-		wordId: 0,
-		currentLetterId: 0,
-		score: 0,
-		lang: null,
-
-		getCurrentWord: function () {
-			return this.words[this.wordId];
+			words: null,
+			wordId: 0,
+			currentLetterId: 0,
+			score: 0,
+			lang: null
 		},
 
-		keyPress: function (event) {
+		getCurrentWord: function () {
+			return this.get('words')[this.get('wordId')];
+		},
+
+		validate: function () {
+		},
+
+		keyPress: function (a_event) {
 			var that = this;
+
 			return function (e) {
 				var enteredChar = null;
 
-				if (e.ctrlKey) {
+				e.preventDefault();
+				if (e.ctrlKey || e.charCode < 32) {
 					return;
 				}
 
 				enteredChar = String.fromCharCode(e.charCode).toLowerCase();
 
-				if (
-					that.CHAR_FORMAT.test(enteredChar) &&
-						that.getCurrentWord()[that.currentLetterId] === enteredChar
-				) {
-					event(enteredChar);
-					that.currentLetterId += 1;
+				if (that.getCurrentWord()[that.get('currentLetterId')] === enteredChar) {
+					a_event(enteredChar);
+					that.set('currentLetterId', that.get('currentLetterId') + 1);
 
-					if (that.currentLetterId >= that.getCurrentWord().length) {
+					if (that.get('currentLetterId') >= that.getCurrentWord().length) {
 						that.deletePastWord();
 						that.pickWord();
 					}
@@ -47,32 +51,31 @@ define(['backbone'], function (Backbone) {
 		},
 
 		deletePastWord: function () {
-			this.words.pop(this.wordId);
+			this.get('words').pop(this.get('wordId'));
 		},
 
 		pickWord: function () {
-			this.wordId = Math.floor(Math.random() * this.words.length);
-			this.currentLetterId = 0;
+			this.set('wordId', Math.floor(Math.random() * this.get('words').length));
+			this.set('currentLetterId', 0);
 		},
 
-		getWordList: function (a_onDone) {
+		getWordList: function () {
 			var that = this;
 			// Downloads a word list, default language list is english.
 			$.ajax({
-				url: that.WORDLISTS_DIRECTORY + that.lang + that.WORDLIST_EXTENSION,
+				url: that.get('WORDLISTS_DIRECTORY') + that.get('lang') + that.get('WORDLIST_EXTENSION'),
 				dataType: 'text',
 				contentType: 'text/plain; charset=utf-8',
-				success: function (data) {
-					that.words = data.trimLeft().trimRight().split(/\n+/);
+				success: function (a_data) {
+					that.set('words', a_data.trimLeft().trimRight().split(/\n+/));
 					that.pickWord();
-					a_onDone();
 				},
 				error: function () {
 					// Gets the default language list if is failes with a non default one
-					if (that.lang === that.DEFAULT_LANG) {
+					if (that.get('lang') === that.get('DEFAULT_LANG')) {
 						alert('Couldn\'t load the wordlist =(.');
 					} else {
-						that.lang = that.DEFAULT_LANG;
+						that.set('lang', that.get('DEFAULT_LANG'));
 						that.getWordList();
 					}
 				}
@@ -81,12 +84,13 @@ define(['backbone'], function (Backbone) {
 
 		initialize: function () {
 			// TODO: ADD MENUES 'N' STUFF.
-			var index = 0;
-			this.lang = navigator.language || navigator.userLanguage;
-			index = this.lang.indexOf('-');
+			var index = 0, lang = null;
+
+			lang = navigator.language || navigator.userLanguage;
+			index = lang.indexOf('-');
 
 			if (index > 0) {
-				this.lang = this.lang.substr(0, index);
+				this.set('lang', lang.substr(0, index));
 			}
 		}
 	});

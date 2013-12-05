@@ -3,70 +3,87 @@
 // ## The View
 define(['backbone', 'jade'], function (Backbone, Jade) {
 	'use strict';
+
 	return Backbone.View.extend({
+		TEXT_TAG_FORMAT: 'p.text-center',
+		INPUT_TEXT_TAG_FORMAT: 'input(type="text").text-center',
+		HEADER_TAG_FORMAT: 'h1.text-container.text-center #{text}',
+		CONTAINER_TAG_FORMAT: 'div.container',
 		el: 'body',
-		headerTagFormat: 'h1.text-container.text-center #{text}',
-		textTagFormat: 'p.text-center',
-		inputTextTagFormat: 'p.text-center',
+
 		textTag: null,
 		inputTextTag: null,
 
 		text: function () {
-			return this.model.HEADER_TEXT;
+			return this.model.get('HEADER_TEXT');
 		},
 
 		keyPress: function () {
 			return this.model.keyPress(this.change());
 		},
 
-		onLoadLang: function () {
-			var that = this;
-
-			return function () {
-				that.textTag.text(that.model.getCurrentWord());
-			};
-		},
-
 		change: function () {
 			var that = this;
 
 			return function (a_char) {
-				that.inputTextTag.text(that.inputTextTag.text() + a_char);
+				that.inputTextTag.val(that.inputTextTag.val() + a_char);
 			};
 		},
 
-		render: function () {
-			var jHeader = null, jText = null, jInputText = null;
+		onLoadLang: function () {
+			var that = this;
 
-			jHeader = Jade.compile(this.headerTagFormat);
-			jText = Jade.compile(this.textTagFormat);
-			jInputText = Jade.compile(this.inputTextTagFormat);
+			return function () {
+				that.inputTextTag.val("");
+				that.textTag.text(that.model.getCurrentWord());
+			};
+		},
 
-			// Adds to the body
-			$(this.el).append(
-				// Adds the header with text to the body
-				jHeader({text: this.text()})
-			);
+		events: {
+			'bacon': 'change'
+		},
 
+		initialize: function () {
+			var jContainer = null, jHeader = null,
+				jText = null, jInputText = null,
+				container = null;
+
+			jContainer = Jade.compile(this.CONTAINER_TAG_FORMAT);
+			jHeader = Jade.compile(this.HEADER_TAG_FORMAT);
+			jText = Jade.compile(this.TEXT_TAG_FORMAT);
+			jInputText = Jade.compile(this.INPUT_TEXT_TAG_FORMAT);
+			this.model.on('change:wordId', this.onLoadLang());
+
+			container = $(jContainer());
 			this.textTag = $(jText());
-
-			// Adds to the body
-			$(this.el).append(
-				// Adds text element to the body
-				this.textTag
-			);
-
 			this.inputTextTag = $(jInputText());
 
 			// Adds to the body
-			$(this.el).append(
-				// Adds the input text element to the body
+			$(this.el).append(container);
+
+			// Adds to the container
+			container.append(
+				// Adds the header with text to the container
+				jHeader({text: this.text()})
+			);
+
+			// Adds to the container
+			container.append(
+				// Adds text element to the container
+				this.textTag
+			);
+
+			// Adds to the container
+			container.append(
+				// Adds the input text element to the container
 				this.inputTextTag
 			);
 
-			$(document).keypress(this.keyPress());
-			this.model.getWordList(this.onLoadLang());
-			return this;
+			$(this.inputTextTag).keypress(this.keyPress());
+			this.model.getWordList();
+		},
+
+		render: function () {
 		}
 	});
 });
