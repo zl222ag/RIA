@@ -3,6 +3,7 @@
 // ## Starting module
 define(['script/view.js', 'script/model.js'], function (View, Model) {
 	'use strict';
+
 	return {
 		// The function that starts everything.
 		start: function () {
