@@ -4,12 +4,12 @@
 require.config({
 	paths: {
 		// Get all the required modules
-		jquery: 'script/jquery-2.0.3.min',
-		backbone: 'script/backbone',
-		purebackbone: 'script/backbone-min',
-		underscore: 'script/underscore-min',
-		jade: 'script/jade',
-		text: 'script/text'
+		jquery: 'script/libs/jquery-2.0.3.min',
+		backbone: 'script/app/backbone',
+		purebackbone: 'script/libs/backbone-min',
+		underscore: 'script/libs/underscore-min',
+		jade: 'script/libs/jade',
+		text: 'script/libs/text'
 	},
 
 	shim: {

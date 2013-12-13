@@ -15,9 +15,12 @@ define(['backbone', 'text'], function (Backbone) {
 			wordId: 0,
 			currentLetterId: 0,
 			score: 0,
+			mode: 'normal',
 			lang: null
 		},
 
+		MODE_FORMAT: /^(long|short|normal)$/i,
+		NUMBER_OF_WORDS: 50,
 		LANG_FORMAT: /^[a-z]{2}$/,
 
 		validate: function (a_attribs) {
@@ -34,6 +37,9 @@ define(['backbone', 'text'], function (Backbone) {
 			}
 			if (a_attribs.score < 0) {
 				return 'model.score cannot possibly be lower than 0. Got: ' + a_attribs.score + '.';
+			}
+			if (!this.MODE_FORMAT.test(a_attribs.mode)) {
+				return 'Invalid mode!';
 			}
 			// TODO: FIX THAT THING DOWN THERE, UNCOMMENT.
 			/*
@@ -96,7 +102,7 @@ define(['backbone', 'text'], function (Backbone) {
 			// Initializes, finds out the language and sets it.
 			var index = 0, lang = null;
 
-			this.on('invalid', function (a_model, a_error) {
+			this.listenTo(this, 'invalid', function (a_model, a_error) {
 				// TODO: PLZ REMOVE ME SOON.
 				alert('Error: ' + a_error);
 			});
