@@ -5,7 +5,7 @@ require.config({
 	paths: {
 		// Get all the required modules
 		jquery: 'script/libs/jquery-2.0.3.min',
-		backbone: 'script/app/backbone',
+		backbone: 'script/libs/backbone',
 		purebackbone: 'script/libs/backbone-min',
 		underscore: 'script/libs/underscore-min',
 		jade: 'script/libs/jade',
