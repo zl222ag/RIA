@@ -21,5 +21,10 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
-# For the web, i guess
+# My own, i guess
+*.html text eol=lf
+*.css text eol=lf
+*.txt text eol=lf
 *.js text eol=lf
+*.sh text eol=lf
+*.md text eol=lf

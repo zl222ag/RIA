@@ -1,7 +1,11 @@
 // © Zlatko Ladan 2013
 
 // ## The Router
-define(['backbone', 'script/app/gameview.js', 'script/app/gamemodel.js'], function (Backbone, GameView, GameModel) {
+define([
+	'backbone',
+	'script/app/gameview.js',
+	'script/app/gamemodel.js'
+], function (Backbone, GameView, GameModel) {
 	'use strict';
 
 	return Backbone.Router.extend({
@@ -20,7 +24,7 @@ define(['backbone', 'script/app/gameview.js', 'script/app/gamemodel.js'], functi
 		},
 
 		index: function () {
-			// TODO: this shouldn't be first choice.
+			// TODO this shouldn't be first choice.
 			this.gameView.render();
 
 			this.gameModel.getWordList();
@@ -40,13 +44,10 @@ define(['backbone', 'script/app/gameview.js', 'script/app/gamemodel.js'], functi
 		},
 
 		initialize: function () {
-			// TODO: view should be cleanable.
+			// TODO view should be cleanable.
 			// Initializes all of the components.
 			this.gameModel = new GameModel({'router': this});
 			this.gameView = new GameView({'model': this.gameModel});
-			this.listenTo(this.gameModel, 'invalid', function () {
-				alert("error");
-			});
 			Backbone.history.start();
 		}
 	});

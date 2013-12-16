@@ -1,1 +1,1 @@
-define(["purebackbone"],function(e){return Backbone.noConflict(),e});
+define(["purebackbone","localstorage"],function(e){return Backbone.noConflict(),e});
