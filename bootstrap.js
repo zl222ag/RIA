@@ -8,6 +8,7 @@ require.config({
 		backbone: 'script/libs/backbone',
 		purebackbone: 'script/libs/backbone-min',
 		underscore: 'script/libs/underscore-min',
+		localstorage: 'script/libs/backbone.localStorage-min',
 		jade: 'script/libs/jade',
 		text: 'script/libs/text'
 	},
@@ -25,6 +26,7 @@ require.config({
 
 require(['app'], function (App) {
 	'use strict';
+
 	// Start it all.
 	App.start();
 });

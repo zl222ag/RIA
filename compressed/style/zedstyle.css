@@ -56,5 +56,6 @@ input.text-center {
 	display: block;
 }
 span.cleared {color: #0f0; }
-p.score:before {content: 'Score: '; }
-p.score:after {content: '.'; }
+span.score:before {content: 'Score: '; }
+span.score {padding-left: 5pt; }
+span.score:after {content: '.'; }

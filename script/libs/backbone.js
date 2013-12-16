@@ -1,4 +1,4 @@
-define(['purebackbone'], function (BB) {
+define(['purebackbone', 'localstorage'], function (BB) {
 	'use strict';
 
 	Backbone.noConflict();
