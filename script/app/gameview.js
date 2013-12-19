@@ -1,10 +1,11 @@
 // © Zlatko Ladan 2013
 
-// ## The View
+// ## The Game View
 define(['backbone', 'jade'], function (Backbone, Jade) {
 	'use strict';
 
 	return Backbone.View.extend({
+		ACCEPTABLE_CHAR_INDEX: 65,
 		WORD_CONTAINER_TAG_FORMAT: 'div.text-center',
 		CLEARED_WORD_TAG_FORMAT: 'span.cleared',
 		WORD_TAG_FORMAT: 'span',
@@ -13,20 +14,41 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		CONTAINER_TAG_FORMAT: 'div.container',
 		STATUS_TAG_FORMAT: 'div.status\n\tspan.glyphicon.glyphicon-info-sign',
 		SCORE_TEXT_TAG_FORMAT: 'span.score 0',
-		el: 'body',
+		el: 'div#wrapper',
 
 		clearedWordTag: null,
 		wordTag: null,
 		inputWordTag: null,
 		statusTag: null,
 		scoreNode: null,
+		rendered: false,
 		keysDown: {},
 
 		getHeaderText: function () {
 			return this.model.get('HEADER_TEXT');
 		},
 
+		getIsRendered: function () {
+			return this.isRendered;
+		},
+
+		setIsRendered: function (a_value) {
+			if (typeof a_value !== 'boolean') {
+				throw 'bacon';
+			}
+			this.isRendered = a_value;
+		},
+
 		onKeyDown: function (e) {
+			// Only adds character if it's
+			// "valid" and has not been added
+			// already.
+			if (e.ctrlKey || e.keyCode < this.ACCEPTABLE_CHAR_INDEX ||
+					this.keysDown[e.keyCode.toString()] === true
+					) {
+				return false;
+			}
+			this.keysDown[e.keyCode.toString()] = true;
 		},
 
 		onKeyUp: function (e) {
@@ -40,9 +62,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 
 			e.preventDefault();
 
-			if (e.ctrlKey) {
-				return;
+			if (e.ctrlKey || e.keyCode < this.ACCEPTABLE_CHAR_INDEX) {
+				return false;
 			}
+
+			this.keysDown[e.keyCode.toString()] = false;
 
 			lastChar = this.inputWordTag.val().substr(0, 1).toLowerCase();
 
@@ -54,6 +78,14 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 				this.clearedWordTag.text(word.substr(0, splitIndex));
 				this.wordTag.text(word.substr(splitIndex));
 			}
+		},
+
+		selectionKiller: function (e) {
+			// Since user will not be able to selet
+			// we must prevent default which disables
+			// focus, it's therefore called manually.
+			e.target.focus();
+			e.preventDefault();
 		},
 
 		onChangeWord: function () {
@@ -73,14 +105,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			alert(a_message);
 		},
 
-		onInvalid: function (a_callee, a_message) {
-			alert(a_message);
-		},
-
 		events: {
 			// Only reading for key input.
+			'keydown input#inputword': 'onKeyDown',
 			'keyup input#inputword': 'onKeyUp',
-			'keydown input#inputword': 'onKeyDown'
+			'mousedown input#inputword': 'selectionKiller'
 		},
 
 		initialize: function () {
@@ -88,10 +117,10 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			this.listenTo(this.model, 'change:wordId', this.onChangeWord);
 			this.listenTo(this.model, 'change:score', this.onChangeScore);
 			this.listenTo(this.model, 'highscore', this.onNewHighScore);
-			this.listenTo(this.model, 'invalid', this.onInvalid);
 
 			// Makes "this"  the view and not the element on which the event runs on.
 			_.bind(this.onKeyUp, this);
+			_.bind(this.onKeyDown, this);
 		},
 
 		render: function () {
@@ -100,13 +129,12 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			// word and the non cleared  parts and also adds
 			// a input for reading.
 
-			var jContainer = null, jHeader = null, jWordContainer = null,
+			var jHeader = null, jWordContainer = null,
 				jCleared = null, jWord = null, jInputText = null, jStatus = null,
-				jScore = null, container = null, wordContainer = null, scoreTag = null;
+				jScore = null, wordContainer = null, scoreTag = null;
 
 			document.title = this.getHeaderText();
 
-			jContainer = Jade.compile(this.CONTAINER_TAG_FORMAT);
 			jHeader = Jade.compile(this.HEADER_TAG_FORMAT);
 			jWordContainer = Jade.compile(this.WORD_CONTAINER_TAG_FORMAT);
 			jCleared = Jade.compile(this.CLEARED_WORD_TAG_FORMAT);
@@ -115,7 +143,6 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			jStatus = Jade.compile(this.STATUS_TAG_FORMAT);
 			jScore = Jade.compile(this.SCORE_TEXT_TAG_FORMAT);
 
-			container = $(jContainer());
 			wordContainer = $(jWordContainer());
 			this.clearedWordTag = $(jCleared());
 			this.wordTag = $(jWord());
@@ -125,14 +152,14 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			// Gets the text node from score element.
 			this.scoreNode = scoreTag.contents().eq(0)[0];
 
-			container.append(jHeader({text: this.getHeaderText()}));
+			this.$el.append(jHeader({text: this.getHeaderText()}));
 			wordContainer.append(this.clearedWordTag);
 			wordContainer.append(this.wordTag);
 			this.statusTag.append(scoreTag);
-			container.append(wordContainer);
-			container.append(this.inputWordTag);
-			container.append(this.statusTag);
-			this.$el.append(container);
+			this.$el.append(wordContainer);
+			this.$el.append(this.inputWordTag);
+			this.$el.append(this.statusTag);
+			this.setIsRendered(true);
 
 			return this;
 		}

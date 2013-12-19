@@ -1,6 +1,6 @@
 // © Zlatko Ladan 2013
 
-// ## The Model
+// ## The Game Model
 define(['backbone', 'text'], function (Backbone) {
 	'use strict';
 
@@ -19,36 +19,17 @@ define(['backbone', 'text'], function (Backbone) {
 			wordId: 0,
 			currentLetterId: 0,
 			score: 0,
+			highscore: 0,
 			mode: 'normal',
-			lang: null
+			lang: null,
+			errors: 0
 		},
-
-		storedModel: new (Backbone.Model.extend({
-			defaults: {
-				score: 0
-			},
-
-			localStorage: new Backbone.LocalStorage("GameData"),
-
-			validate: function (a_attribs) {
-				if (typeof a_attribs.score !== 'number' || a_attribs.score < 0) {
-					return 'model.score must be a number and cannot possibly lower than 0. Got a ' +
-						typeof a_attribs.score + ' with value ' + a_attribs.score + '.';
-				}
-			},
-
-			initialize: function () {
-				// TODO test the storing, it dind't work before, right? 
-				this.fetch();
-			}
-		}))(),
 
 		MODE_FORMAT: /^(long|short|normal)$/i,
 		NUMBER_OF_WORDS: 50,
-		LANG_FORMAT: /^[a-z]{2}$/,
+		LANG_FORMAT: /^[a-z]{2}$/i,
 
 		validate: function (a_attribs) {
-			// TODO test
 			if (!(a_attribs.words instanceof Array)) {
 				return 'model.words can only be a string array. Got: ' + a_attribs.words + '.';
 			}
@@ -56,12 +37,17 @@ define(['backbone', 'text'], function (Backbone) {
 			if (!(a_attribs.storedWords instanceof Array)) {
 				return 'model.words can only be a string array. Got: ' + a_attribs.storedWords + '.';
 			}
-			if (a_attribs.wordId < 0 || (a_attribs.wordId >= a_attribs.words.length && a_attribs.wordId !== 0)) {
+			if (typeof a_attribs.wordId !== 'number' || a_attribs.wordId < 0 ||
+					(
+						a_attribs.wordId >= a_attribs.words.length &&
+						a_attribs.wordId !== 0
+					)
+					) {
 				return 'model.wordId cannot be less than 0 or greater than the size of model.words. Got: ' +
 					a_attribs.wordId + '.';
 			}
 			// TODO test especially this one. ---/V
-			if (a_attribs.currentLetterId < 0 ||
+			if (typeof a_attribs.currentLetterId !== 'number' || a_attribs.currentLetterId < 0 ||
 					(
 						a_attribs.words.length > 0 &&
 						a_attribs.currentLetterId > a_attribs.words[a_attribs.wordId].length
@@ -75,14 +61,21 @@ define(['backbone', 'text'], function (Backbone) {
 				return 'model.score must be a number and cannot possibly lower than 0. Got a ' +
 					typeof a_attribs.score + ' with value ' + a_attribs.score + '.';
 			}
-			if (!this.MODE_FORMAT.test(a_attribs.mode)) {
-				return 'Invalid mode!';
+			if (typeof a_attribs.mode !== 'string' || !this.MODE_FORMAT.test(a_attribs.mode)) {
+				this.trigger('modeerror', 'Invalid mode!');
+				return 'model.error can only be in the right format!';
 			}
-			// TODO FIX THAT THING DOWN THERE, UNCOMMENT.
-			/*
-			if (a_attribs.lang !== null && this.LANG_FORMAT.test(a_attribs.lang)) {
+
+			if (a_attribs.lang === null) {
+				a_attribs.lang = a_attribs.DEFAULT_LANG;
+			}
+
+			if (typeof a_attribs.lang !== 'string' || !this.LANG_FORMAT.test(a_attribs.lang)) {
 				return 'model.lang can only be null or contain only 2 letters. Got: ' + a_attribs.lang;
-			}*/
+			}
+			if (typeof a_attribs.errors !== 'number' || a_attribs.errors < 0) {
+				return 'model.error can only a number greater than or equal to 0';
+			}
 		},
 
 		getCurrentWord: function () {
@@ -93,8 +86,12 @@ define(['backbone', 'text'], function (Backbone) {
 			return this.get('score');
 		},
 
+		addToScore: function (a_value) {
+			this.set('score', this.get('score') + a_value);
+		},
+
 		getHighscore: function () {
-			return this.storedModel.get('score');
+			return this.get('highscore');
 		},
 
 		guessChar: function (a_char) {
@@ -106,9 +103,13 @@ define(['backbone', 'text'], function (Backbone) {
 
 			index += 1;
 
+			// If cleared word!
 			if (index >= this.getCurrentWord().length) {
+				// Removes old word
 				this.deletePastWord();
 
+				// TODO add time to equation.
+				this.addToScore(this.getCurrentWord().length * 2 / (this.get('errors') + 1));
 				// If words are done and score is greater than high-score,
 				// then update the new score.
 				if (!this.pickWord() && this.getScore() > this.getHighscore()) {
@@ -175,6 +176,13 @@ define(['backbone', 'text'], function (Backbone) {
 
 		cleanArrayFilter: function (a_value) {
 			return typeof a_value === 'string' && a_value.length > 0;
+		},
+
+		getStored: function (a_value) {
+			if (typeof a_value !== 'string') {
+				throw 'bacon';
+			}
+			return localStorage.getItem(a_value);
 		},
 
 		initialize: function () {
