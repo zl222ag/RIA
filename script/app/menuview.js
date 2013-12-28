@@ -27,14 +27,14 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 
 		setIsRendered: function (a_value) {
 			if (typeof a_value !== 'boolean') {
-				throw 'bacon';
+				throw 'menuview.isRendered must be a boolean, got ' + typeof a_value + '.';
 			}
 			this.isRendered = a_value;
 		},
 
 		setIsInGame: function (a_value) {
 			if (typeof a_value !== 'boolean') {
-				throw 'bacon';
+				throw 'menuview.isInGame must be a boolean, got ' + typeof a_value + '.';
 			}
 
 			if (a_value) {
@@ -47,10 +47,14 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		addMenuItem: function (a_text, a_href, a_inGame) {
 			var menuItem = null;
 			if (typeof a_text !== 'string' || a_text.length < 1) {
-				throw 'bacon';
+				throw 'gameview\'s function addMenuItem parameter a_text must be a string with lenght 1' +
+					' or greater, got ' + typeof a_text +
+					(typeof a_text === 'string' ? ' with length' + a_text.length.toString() : '') + '.';
 			}
-			if (typeof a_href !== 'string' || a_text.length < 1) {
-				throw 'bacon';
+			if (typeof a_href !== 'string' || a_href.length < 1) {
+				throw 'gameview\'s function addMenuItem parameter a_href must be a string with lenght 1' +
+					'or greater, got ' + typeof a_href +
+					(typeof a_href === 'string' ? ' with length' + a_href.length.toString() : '') + '.';
 			}
 
 			if (a_inGame === undefined) {
@@ -58,7 +62,7 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			}
 
 			if (typeof a_inGame !== 'boolean') {
-				throw 'bacon';
+				throw 'gameview.addMenuItem\'s a_inGame must be a boolean, got ' + typeof a_inGame + '.';
 			}
 			menuItem = $(this.jMenuItem({'text': a_text, 'locat': a_href, 'role': a_inGame}));
 			this.menu.append(menuItem);

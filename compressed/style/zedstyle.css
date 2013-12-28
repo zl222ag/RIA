@@ -59,18 +59,16 @@ span.cleared {color: #0f0; }
 span.score:before {content: 'Score: '; }
 span.score {padding-left: 5pt; }
 span.score:after {content: '.'; }
-#wrapper {
-	text-align: center;
-}
-#wrapper li {
-	padding-bottom: 5pt;
-}
-#wrapper li.ingame {
-	display: none;
-}
-#wrapper.game li.ingame {
-	display: block;
-}
-#wrapper.game li:not(.ingame) {
-	display: none;
-}
+span.highscore:before {content: 'Highscore: '; }
+span.highscore {padding-left: 5pt; }
+span.highscore:after {content: '.'; }
+span.word:before {content: 'Word: '; }
+span.word {padding-left: 5pt; }
+span.word:after {content: '.'; }
+#wrapper {text-align: center; }
+#wrapper li {padding-bottom: 5pt; }
+#wrapper li.ingame {display: none; }
+#wrapper.game li.ingame {display: block; }
+#wrapper.game li:not(.ingame) {display: none; }
+#wrapper.game .container {display: block; }
+#wrapper .container {display: none; }

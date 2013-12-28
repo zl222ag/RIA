@@ -36,16 +36,17 @@ define([
 		play: function (a_mode) {
 			// Letse GO!
 			this.gameModel.set('mode', a_mode, {validate: true});
-			if (!this.menuView.getIsRendered()) {
-				this.menuView.render();
-			}
-			if (!this.gameView.getIsRendered()) {
-				this.gameView.render();
-			}
 			if (!this.invalidMode) {
 				this.menuView.setIsInGame(true);
 
-				this.gameModel.getWordList();
+				if (this.gameModel.get('storedWords') < 1) { // TODO CHANGE
+					this.gameModel.listenToOnce(this.gameModel, 'wordsLoaded', function () {
+						this.startNewGame();
+					});
+					this.gameModel.getWordList();
+				} else {
+					this.gameModel.startNewGame();
+				}
 			} else {
 				this.invalidMode = false;
 			}
@@ -53,7 +54,7 @@ define([
 
 		invalid: function () {
 			// Navigates to "index".
-			alert("Sorry, redirecting you to menu.\nYOU'VE made a mistake.");
+			alert('Sorry, redirecting you to menu.\nYOU\'VE made a mistake.');
 			this.invalidMode = true;
 			this.menuView.setIsInGame(false);
 			this.navigate('/', {trigger: true});
@@ -63,15 +64,26 @@ define([
 			this.navigate(a_location, {trigger: true});
 		},
 
+		onFinishedGame: function () {
+			this.navigate('/', {trigger: true});
+		},
+
 		initialize: function () {
 			// TODO view should be cleanable.
 			// Initializes all of the components.
 			this.gameModel = new GameModel({'router': this});
 			this.gameView = new GameView({'model': this.gameModel});
 			this.menuView = new MenuView();
-			this.listenTo(this.gameModel, "modeerror", this.invalid);
-			this.listenTo(this.menuView, "location", this.onLocationChange);
+			this.listenTo(this.gameModel, 'modeerror', this.invalid);
+			this.listenTo(this.menuView, 'location', this.onLocationChange);
+			this.listenTo(this.gameModel, 'finishedgame', this.onFinishedGame);
 			Backbone.history.start();
+			if (!this.menuView.getIsRendered()) {
+				this.menuView.render();
+			}
+			if (!this.gameView.getIsRendered()) {
+				this.gameView.render();
+			}
 		}
 	});
 });
