@@ -153,7 +153,9 @@ define(['backbone', 'text'], function (Backbone) {
 					if (this.getScore() > this.getHighscore()) {
 						this.trigger('beat-highscore', 'New high-score ' + this.getScore().toString() +
 							', congratulations!');
-						this.set('highscore', this.getScore(), {validate: true});
+						if (this.set('highscore', this.getScore(), {validate: true}) !== false) {
+							this.setStored('highscore', this.getScore());
+						}
 					} else {
 						this.trigger('beat-highscore', 'Not a new high-score ' + this.getScore().toString() +
 							', congratulations!');
@@ -284,7 +286,7 @@ define(['backbone', 'text'], function (Backbone) {
 				console.error(
 					'gamemodel parseint\'s parameter a_value must be a string in the correct integer format' +
 						'got ' + typeof a_value +
-						(typeof a_value === 'string' ? 'with value ' + a_value + '.' : '')
+						(typeof a_value === 'string' ? 'with value ' + a_value : '') + '.'
 				);
 				return 0;
 			}
