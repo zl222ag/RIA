@@ -79,7 +79,7 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		},
 
 		selectionKiller: function (e) {
-			// Since user will not be able to selet
+			// Since user will not be able to select
 			// we must prevent default which disables
 			// focus, it's therefore called manually.
 			// Doesn't work for mobile devices
@@ -114,6 +114,11 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			alert(a_message);
 		},
 
+		onNewGame: function () {
+			// When new game has started.
+			this.inputWordTag.val('');
+		},
+
 		events: {
 			// Only reading for key input.
 			'keydown input#inputword': 'onKeyDown',
@@ -127,6 +132,7 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			this.listenTo(this.model, 'change:score', this.onChangeScore);
 			this.listenTo(this.model, 'change:highscore', this.onChangeHighscore);
 			this.listenTo(this.model, 'beat-highscore', this.onNewHighScore);
+			this.listenTo(this.model, 'newgame', this.onNewGame);
 
 			// Makes "this"  the view and not the element on which the event runs on.
 			_.bind(this.onKeyUp, this);

@@ -121,6 +121,11 @@ define(['backbone', 'text'], function (Backbone) {
 			this.set('score', this.get('score') + a_value, {validate: true});
 		},
 
+		resetScore: function () {
+			// Does what it is called.
+			this.set('score', 0);
+		},
+
 		getHighscore: function () {
 			// Does what it is called.
 			return this.get('highscore');
@@ -197,6 +202,8 @@ define(['backbone', 'text'], function (Backbone) {
 					'currentLetterId': 0
 				}, {validate: true});
 			}
+			this.trigger('newgame');
+			this.resetScore();
 			this.pickWord();
 		},
 
