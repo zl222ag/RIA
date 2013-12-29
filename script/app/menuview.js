@@ -5,10 +5,6 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 	'use strict';
 
 	return Backbone.View.extend({
-		defaults: {
-			rendered: false
-		},
-
 		MENU_FORMAT: 'ul.list-unstyled#gamemenu',
 		MENU_ITEM_FORMAT: 'li(class=role?"ingame":"")\n\ta(href="#",location=locat).btn.btn-default #{text}',
 		el: 'div#wrapper',
@@ -19,17 +15,6 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		onClick: function (e) {
 			e.preventDefault();
 			this.trigger('location', e.target.getAttribute('location'));
-		},
-
-		getIsRendered: function () {
-			return this.isRendered;
-		},
-
-		setIsRendered: function (a_value) {
-			if (typeof a_value !== 'boolean') {
-				throw 'menuview.isRendered must be a boolean, got ' + typeof a_value + '.';
-			}
-			this.isRendered = a_value;
 		},
 
 		setIsInGame: function (a_value) {
@@ -85,7 +70,6 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			this.addMenuItem('Long Words', 'play/long');
 			this.addMenuItem('Back', '/', true);
 			this.$el.append(this.menu);
-			this.setIsRendered(true);
 
 			return this;
 		}

@@ -171,11 +171,17 @@ define(['backbone', 'text'], function (Backbone) {
 
 			switch (this.get('mode')) {
 			case 'long':
-				this.set('words', this.get('storedWords').slice(-this.NUMBER_OF_WORDS), {validate: true});
+				this.set({
+					'words': this.get('storedWords').slice(-this.NUMBER_OF_WORDS),
+					'currentLetterId': 0
+				}, {validate: true});
 				break;
 
 			case 'short':
-				this.set('words', this.get('storedWords').slice(0, this.NUMBER_OF_WORDS), {validate: true});
+				this.set({
+					'words': this.get('storedWords').slice(0, this.NUMBER_OF_WORDS),
+					'currentLetterId': 0
+				}, {validate: true});
 				break;
 
 			default: // 'normal'
@@ -184,7 +190,10 @@ define(['backbone', 'text'], function (Backbone) {
 				for (i = 0, len = this.NUMBER_OF_WORDS; i < len; i += 1) {
 					tmpWords.push(tmpAll.slice(Math.floor(Math.random() * tmpAll.length, 1))[0]);
 				}
-				this.set('words', tmpWords, {validate: true});
+				this.set({
+					'words': tmpWords,
+					'currentLetterId': 0
+				}, {validate: true});
 			}
 			this.pickWord();
 		},
@@ -277,6 +286,7 @@ define(['backbone', 'text'], function (Backbone) {
 						'got ' + typeof a_value +
 						(typeof a_value === 'string' ? 'with value ' + a_value + '.' : '')
 				);
+				return 0;
 			}
 			return window.parseInt(a_value);
 		},

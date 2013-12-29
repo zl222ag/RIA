@@ -25,24 +25,10 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 		statusTag: null,
 		scoreNode: null,
 		wordNode: null,
-		rendered: false,
 		keysDown: {},
 
 		getHeaderText: function () {
 			return this.model.get('HEADER_TEXT');
-		},
-
-		getIsRendered: function () {
-			// Has the view been rendered?
-			return this.isRendered;
-		},
-
-		setIsRendered: function (a_value) {
-			// Sets if the view been rendered?
-			if (typeof a_value !== 'boolean') {
-				throw 'gameview.isRendered must be a boolean, got ' + typeof a_value + '.';
-			}
-			this.isRendered = a_value;
 		},
 
 		onKeyDown: function (e) {
@@ -50,11 +36,9 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			// "valid" and has not been added
 			// already.
 
-			// Ugly fix for mobile
-			if (e.keyCode === 0) {
-				return false;
-			}
-			if (e.ctrlKey || e.keyCode < this.ACCEPTABLE_CHAR_INDEX ||
+			// e.keyCode !== 0 && e.keyCode < this.ACCEPTABLE_CHAR_INDEX
+			// Because firefox is a * and mobiles are special.
+			if (e.ctrlKey || (e.keyCode !== 0 && e.keyCode < this.ACCEPTABLE_CHAR_INDEX) ||
 					this.keysDown[e.keyCode.toString()] === true
 					) {
 				return false;
@@ -197,7 +181,6 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			container.append(this.inputWordTag);
 			container.append(this.statusTag);
 			this.$el.append(container);
-			this.setIsRendered(true);
 
 			return this;
 		}

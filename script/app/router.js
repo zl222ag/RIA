@@ -27,9 +27,6 @@ define([
 		},
 
 		index: function () {
-			if (!this.menuView.getIsRendered()) {
-				this.menuView.render();
-			}
 			this.menuView.setIsInGame(false);
 		},
 
@@ -69,7 +66,6 @@ define([
 		},
 
 		initialize: function () {
-			// TODO view should be cleanable.
 			// Initializes all of the components.
 			this.gameModel = new GameModel({'router': this});
 			this.gameView = new GameView({'model': this.gameModel});
@@ -78,12 +74,8 @@ define([
 			this.listenTo(this.menuView, 'location', this.onLocationChange);
 			this.listenTo(this.gameModel, 'finishedgame', this.onFinishedGame);
 			Backbone.history.start();
-			if (!this.menuView.getIsRendered()) {
-				this.menuView.render();
-			}
-			if (!this.gameView.getIsRendered()) {
-				this.gameView.render();
-			}
+			this.menuView.render();
+			this.gameView.render();
 		}
 	});
 });
