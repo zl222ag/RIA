@@ -2,5 +2,5 @@
 	appDir: ".",
 	baseUrl: ".",
 	dir: "compressed/",
-	fileExclusionRegExp: /^(r\.js|jade\.js|doc\.html|\.git.*|.+\.(md|jar))$/
+	fileExclusionRegExp: /^(app\.build\.js|\.project|r\.js|jade\.js|doc\.html|\.git.*|.+\.(md|jar|sh))$/
 })

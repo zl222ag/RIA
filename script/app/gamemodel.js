@@ -159,7 +159,7 @@ define(['backbone', 'text'], function (Backbone) {
 						this.trigger('beat-highscore', 'New high-score ' + this.getScore().toString() +
 							', congratulations!');
 						if (this.set('highscore', this.getScore(), {validate: true}) !== false) {
-							this.setStored('highscore', this.getScore());
+							this.store('highscore', this.getScore());
 						}
 					} else {
 						this.trigger('beat-highscore', 'Not a new high-score ' + this.getScore().toString() +
@@ -174,6 +174,7 @@ define(['backbone', 'text'], function (Backbone) {
 		},
 
 		startNewGame: function () {
+			// Does what it is called.
 			var i = 0, len = 0, tmpAll = null, tmpWords = [];
 
 			switch (this.get('mode')) {
@@ -269,29 +270,35 @@ define(['backbone', 'text'], function (Backbone) {
 		},
 
 		cleanArrayFilter: function (a_value) {
+			// cleans an array, removes junk variables.
 			return typeof a_value === 'string' && a_value.length > 0;
 		},
 
-		getStored: function (a_key) {
+		loadStored: function (a_key) {
+			// Loads a stored variable
 			if (typeof a_key !== 'string' || a_key.length < 1) {
-				throw 'gamemodel setStored\'s parameter a_key must be a string greater than or equal to 1, got ' +
+				throw 'gamemodel loadStored\'s parameter a_key must be a string greater than or equal to 1, got ' +
 					typeof a_key + '.';
 			}
 			return window.localStorage.getItem(a_key);
 		},
 
-		setStored: function (a_key, a_value) {
+		store: function (a_key, a_value) {
+			// Stores a variable with a value.
 			if (typeof a_key !== 'string' || a_key.length < 1) {
-				throw 'gamemodel setStored\'s parameter a_key must be a string greater than or equal to 1, got ' +
+				throw 'gamemodel store\'s parameter a_key must be a string greater than or equal to 1, got ' +
 					typeof a_key + '.';
 			}
 			return window.localStorage.setItem(a_key, a_value);
 		},
 
 		parseInteger: function (a_value) {
+			// Parses an integer, shows error if it doesn't
+			// match a string with numbers and return 0.
+
 			if (typeof a_value !== 'string' || !this.INTEGER_FORMAT.test(a_value)) {
 				console.error(
-					'gamemodel parseint\'s parameter a_value must be a string in the correct integer format' +
+					'gamemodel parseint\'s parameter a_value must be a string in the correct integer format ' +
 						'got ' + typeof a_value +
 						(typeof a_value === 'string' ? 'with value ' + a_value : '') + '.'
 				);
@@ -312,7 +319,7 @@ define(['backbone', 'text'], function (Backbone) {
 			} else {
 				this.set('lang', lang, {validate: true});
 			}
-			this.set('highscore', this.parseInteger(this.getStored('highscore')), {validate: true});
+			this.set('highscore', this.parseInteger(this.loadStored('highscore')), {validate: true});
 			this.listenTo(this, 'invalid', function (a_model, a_text) {
 				console.error(a_text);
 			});
