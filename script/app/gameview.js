@@ -188,6 +188,8 @@ define(['backbone', 'jade'], function (Backbone, Jade) {
 			container.append(this.statusTag);
 			this.$el.append(container);
 
+			this.onChangeHighscore();
+
 			return this;
 		}
 	});
